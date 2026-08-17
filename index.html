@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тренажер таблиці множення та ділення</title>
+  <title>Тренажер та корисні інструменти</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -29,7 +29,13 @@
 
     <!-- Картка з завданням -->
     <div class="card">
-      <div id="question" class="question">5 × 5</div>
+      <!-- Перемикач режимів тренажера -->
+      <div class="mode-selector">
+        <button id="mode-add-btn" class="mode-btn active" onclick="setGameMode('add')">➕ / ➖ Додавання</button>
+        <button id="mode-mult-btn" class="mode-btn" onclick="setGameMode('mult')">✖️ / ➗ Множення</button>
+      </div>
+
+      <div id="question" class="question">3 + 5</div>
       <input type="number" id="answer-input" placeholder="Введіть відповідь" autofocus>
       <br>
 
@@ -37,6 +43,7 @@
         <button id="check-btn" onclick="checkAnswer()">Перевірити</button>
         <button id="hint-btn" onclick="openModal()">📊 Таблиця</button>
         <button id="tricks-btn" onclick="openTricksModal()">💡 Лайфхаки</button>
+        <button id="counter-btn" onclick="openCounterModal()">🔢 Маленькі цифри</button>
       </div>
 
       <p id="result-message"></p>
@@ -50,8 +57,8 @@
       <h2>Шпоргалка</h2>
       
       <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTable('mult')">Таблиця множення</button>
-        <button class="tab-btn" onclick="switchTable('div')">Таблиця ділення</button>
+        <button class="tab-btn active" onclick="switchTable('mult')">Множення</button>
+        <button class="tab-btn" onclick="switchTable('div')">Ділення</button>
       </div>
 
       <div id="table-container" class="table-grid"></div>
@@ -62,27 +69,73 @@
   <div id="tricks-modal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeTricksModal()">&times;</span>
-      <h2>💡 Як легко запам'ятати?</h2>
+      <h2>💡 Як легко рахувати?</h2>
       
       <div class="tricks-list">
+        <div class="trick-card">
+          <h3>➕ Додавання до 10</h3>
+          <p>Щоб швидко додати, наприклад, <strong>7 + 5</strong>: спочатку додай до 7 скільки не вистачає до 10 (це +3), а потім додай залишок (ще +2). Отримаєш <strong>12</strong>!</p>
+        </div>
+
+        <div class="trick-card">
+          <h3>✋ Простий рахунок на десятках</h3>
+          <p>Якщо додаєш <strong>9</strong>, просто додай 10 і відніми 1. Наприклад: 6 + 9 = 6 + 10 - 1 = <strong>15</strong>.</p>
+        </div>
+
         <div class="trick-card">
           <h3>✋ Фокус з множенням на 9 на пальцях</h3>
           <p>Поклади долоні на стіл. Щоб помножити 9 на <strong>3</strong>, загни 3-й палець зліва. Ліворуч залишиться 2 пальці (це 20), а праворуч — 7 пальців. Відповідь: <strong>27</strong>!</p>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="trick-card">
-          <h3>🖐️ Множення на 5</h3>
-          <p>Усі результати множення на 5 закінчуються або на <strong>0</strong> (якщо множиш парне число), або на <strong>5</strong> (якщо непарне).</p>
+  <!-- Модальне вікно з лічильником маленьких цифр -->
+  <div id="counter-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeCounterModal()">&times;</span>
+      <h2>🔢 Лічильник маленьких цифр (індексів)</h2>
+      <p style="color: #64748b; margin-bottom: 10px;">Введи текст з маленькими цифрами (наприклад: x², H₂O, 5³):</p>
+      
+      <div class="num-keypad">
+        <span class="keypad-title">Верхні індекси (степені):</span>
+        <div class="keypad-row">
+          <button onclick="insertChar('⁰')">⁰</button>
+          <button onclick="insertChar('¹')">¹</button>
+          <button onclick="insertChar('²')">²</button>
+          <button onclick="insertChar('³')">³</button>
+          <button onclick="insertChar('⁴')">⁴</button>
+          <button onclick="insertChar('⁵')">⁵</button>
+          <button onclick="insertChar('⁶')">⁶</button>
+          <button onclick="insertChar('⁷')">⁷</button>
+          <button onclick="insertChar('⁸')">⁸</button>
+          <button onclick="insertChar('⁹')">⁹</button>
         </div>
-
-        <div class="trick-card">
-          <h3>🔄 Перестановка чисел</h3>
-          <p>Від перестановки множників результат не змінюється! Якщо важко згадати <strong>7 × 3</strong>, згадай <strong>3 × 7 = 21</strong>.</p>
+        <span class="keypad-title">Нижні індекси (хімічні/математичні):</span>
+        <div class="keypad-row">
+          <button onclick="insertChar('₀')">₀</button>
+          <button onclick="insertChar('₁')">₁</button>
+          <button onclick="insertChar('₂')">₂</button>
+          <button onclick="insertChar('₃')">₃</button>
+          <button onclick="insertChar('₄')">₄</button>
+          <button onclick="insertChar('₅')">₅</button>
+          <button onclick="insertChar('₆')">₆</button>
+          <button onclick="insertChar('₇')">₇</button>
+          <button onclick="insertChar('₈')">₈</button>
+          <button onclick="insertChar('₉')">₉</button>
         </div>
+      </div>
 
-        <div class="trick-card">
-          <h3>➗ Простий секрет ділення</h3>
-          <p>Ділення — це множення навпаки! Якщо треба знайти <strong>36 ÷ 4</strong>, просто запитай себе: <i>«На що треба помножити 4, щоб отримати 36?»</i> (Відповідь: 9).</p>
+      <textarea id="text-to-count" placeholder="Введіть або вставте ваш текст сюди..." oninput="countSmallDigits()"></textarea>
+
+      <div class="stats-box">
+        <div class="stat-item">
+          <span class="stat-value" id="small-digits-count">0</span>
+          <span class="stat-label">Маленьких цифр</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="total-count">0</span>
+          <span class="stat-label">Усього символів</span>
         </div>
       </div>
     </div>
