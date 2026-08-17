@@ -1,7 +1,6 @@
 let num1, num2, correctAnswer;
-let currentMode = 'mult'; // Режим таблиці підказки: 'mult' або 'div'
+let currentMode = 'mult';
 
-// Іконки FontAwesome замість звичайних смайлів
 const themeIcons = {
   marvel: ['fa-mask', 'fa-bolt', 'fa-shield-halved', 'fa-hand-fist', 'fa-explosion'],
   anime: ['fa-dragon', 'fa-wand-magic-sparkles', 'fa-fire', 'fa-ghost', 'fa-om'],
@@ -49,7 +48,6 @@ function createFloatingIcons(icons) {
   }
 }
 
-// Генерація завдань
 function generateQuestion() {
   const isMultiplication = Math.random() > 0.5;
 
@@ -83,7 +81,7 @@ function checkAnswer() {
   }
 }
 
-// Управління модальним вікном та таблицями
+// Таблиця підказка
 function openModal() {
   document.getElementById('modal').style.display = 'flex';
   renderTable();
@@ -91,6 +89,15 @@ function openModal() {
 
 function closeModal() {
   document.getElementById('modal').style.display = 'none';
+}
+
+// Вікно з лайфхаками
+function openTricksModal() {
+  document.getElementById('tricks-modal').style.display = 'flex';
+}
+
+function closeTricksModal() {
+  document.getElementById('tricks-modal').style.display = 'none';
 }
 
 function switchTable(mode) {
@@ -138,6 +145,6 @@ document.getElementById('answer-input').addEventListener('keypress', function(e)
   }
 });
 
-// Запуск проєкту
+// Запуск
 generateQuestion();
 changeTheme();

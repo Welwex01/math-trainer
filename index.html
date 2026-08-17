@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Тренажер таблиці множення та ділення</title>
-  <!-- Підключення якісних векторних іконок -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -36,7 +35,8 @@
 
       <div class="buttons-group">
         <button id="check-btn" onclick="checkAnswer()">Перевірити</button>
-        <button id="hint-btn" onclick="openModal()">💡 Підказка</button>
+        <button id="hint-btn" onclick="openModal()">📊 Таблиця</button>
+        <button id="tricks-btn" onclick="openTricksModal()">💡 Лайфхаки</button>
       </div>
 
       <p id="result-message"></p>
@@ -55,6 +55,36 @@
       </div>
 
       <div id="table-container" class="table-grid"></div>
+    </div>
+  </div>
+
+  <!-- Модальне вікно з лайфхаками -->
+  <div id="tricks-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeTricksModal()">&times;</span>
+      <h2>💡 Як легко запам'ятати?</h2>
+      
+      <div class="tricks-list">
+        <div class="trick-card">
+          <h3>✋ Фокус з множенням на 9 на пальцях</h3>
+          <p>Поклади долоні на стіл. Щоб помножити 9 на <strong>3</strong>, загни 3-й палець зліва. Ліворуч залишиться 2 пальці (це 20), а праворуч — 7 пальців. Відповідь: <strong>27</strong>!</p>
+        </div>
+
+        <div class="trick-card">
+          <h3>🖐️ Множення на 5</h3>
+          <p>Усі результати множення на 5 закінчуються або на <strong>0</strong> (якщо множиш парне число), або на <strong>5</strong> (якщо непарне).</p>
+        </div>
+
+        <div class="trick-card">
+          <h3>🔄 Перестановка чисел</h3>
+          <p>Від перестановки множників результат не змінюється! Якщо важко згадати <strong>7 × 3</strong>, згадай <strong>3 × 7 = 21</strong>.</p>
+        </div>
+
+        <div class="trick-card">
+          <h3>➗ Простий секрет ділення</h3>
+          <p>Ділення — це множення навпаки! Якщо треба знайти <strong>36 ÷ 4</strong>, просто запитай себе: <i>«На що треба помножити 4, щоб отримати 36?»</i> (Відповідь: 9).</p>
+        </div>
+      </div>
     </div>
   </div>
 

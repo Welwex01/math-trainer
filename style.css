@@ -31,7 +31,6 @@ body {
   z-index: 1;
 }
 
-/* Красиві плаваючі іконки */
 .floating-item {
   position: absolute;
   bottom: -60px;
@@ -58,7 +57,7 @@ body {
   z-index: 2;
   text-align: center;
   width: 90%;
-  max-width: 420px;
+  max-width: 450px;
 }
 
 h1 {
@@ -119,14 +118,15 @@ input:focus {
 
 .buttons-group {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   margin-top: 15px;
+  flex-wrap: wrap;
 }
 
-#check-btn, #hint-btn {
-  padding: 12px 18px;
-  font-size: 16px;
+#check-btn, #hint-btn, #tricks-btn {
+  padding: 12px 14px;
+  font-size: 15px;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -138,7 +138,7 @@ input:focus {
 #check-btn {
   background: linear-gradient(135deg, #6366f1, #3b82f6);
   color: white;
-  flex: 2;
+  flex: 2 1 100%;
 }
 
 #hint-btn {
@@ -147,7 +147,13 @@ input:focus {
   flex: 1;
 }
 
-#check-btn:active, #hint-btn:active {
+#tricks-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  flex: 1;
+}
+
+#check-btn:active, #hint-btn:active, #tricks-btn:active {
   transform: scale(0.96);
 }
 
@@ -157,7 +163,7 @@ input:focus {
   font-weight: bold;
 }
 
-/* Модальне вікно */
+/* Модальні вікна */
 .modal {
   display: none;
   position: fixed;
@@ -199,7 +205,6 @@ input:focus {
   color: #000;
 }
 
-/* Вкладки для підказки */
 .tab-buttons {
   display: flex;
   justify-content: center;
@@ -243,4 +248,33 @@ input:focus {
   margin: 0 0 5px 0;
   color: #2563eb;
   text-align: center;
+}
+
+/* Стилі для лайфхаків */
+.tricks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+  text-align: left;
+}
+
+.trick-card {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.trick-card h3 {
+  margin: 0 0 8px 0;
+  color: #166534;
+  font-size: 18px;
+}
+
+.trick-card p {
+  margin: 0;
+  color: #374151;
+  font-size: 15px;
+  line-height: 1.4;
 }
