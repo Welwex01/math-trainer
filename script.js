@@ -1,5 +1,14 @@
+// Посилання на твій Google Apps Script
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZsXv8wtCHJv46ynb65V0aOTp1xtxKF5Jcao1hDLxo80jx68pBWUrSDRUwukrScmamtg/exec";
+
+let userName = "";
+let secondsSpent = 0;
+let solvedCount = 0;
+let timerInterval;
+
 let num1, num2, correctAnswer;
-let currentMode = 'mult';
+let currentGameMode = 'add';
+let currentTableMode = 'mult';
 
 const themeIcons = {
   marvel: ['fa-mask', 'fa-bolt', 'fa-shield-halved', 'fa-hand-fist', 'fa-explosion'],
@@ -11,6 +20,57 @@ const themeIcons = {
 
 let currentInterval;
 
+function selectUser(name) {
+  document.getElementById('custom-name-input').value = name;
+}
+
+function startSession() {
+  const inputName = document.getElementById('custom-name-input').value.trim();
+  if (!inputName) {
+    alert("Будь ласка, вкажи ім'я!");
+    return;
+  }
+  userName = inputName;
+  document.getElementById('current-user-display').innerText = userName;
+  document.getElementById('user-modal').style.display = 'none';
+
+  startTimer();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsSpent++;
+    const mins = String(Math.floor(secondsSpent / 60)).padStart(2, '0');
+    const secs = String(secondsSpent % 60).padStart(2, '0');
+    document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+
+    // Щохвилини відправляємо оновлення в Google Таблицю
+    if (secondsSpent % 60 === 0) {
+      sendDataToGoogleSheets();
+    }
+  }, 1000);
+}
+
+function sendDataToGoogleSheets() {
+  if (!userName) return;
+
+  const minsSpent = Math.round(secondsSpent / 60);
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: userName,
+      timeSpent: `${minsSpent} хв`,
+      score: solvedCount
+    })
+  });
+}
+
+// Автоматично відправляємо дані, якщо закривають або згортають вкладку
+window.addEventListener("beforeunload", sendDataToGoogleSheets);
+
 function changeTheme() {
   const selectedTheme = document.getElementById('themeSelect').value;
   clearInterval(currentInterval);
@@ -18,49 +78,59 @@ function changeTheme() {
   container.innerHTML = '';
 
   createFloatingIcons(themeIcons[selectedTheme]);
-  currentInterval = setInterval(() => {
-    spawnIcon(themeIcons[selectedTheme]);
-  }, 600);
+  currentInterval = setInterval(() => { spawnIcon(themeIcons[selectedTheme]); }, 600);
 }
 
 function spawnIcon(icons) {
   const container = document.getElementById('floatingBg');
   const iconElement = document.createElement('i');
   iconElement.classList.add('floating-item', 'fa-solid');
-
-  const randomIcon = icons[Math.floor(Math.random() * icons.length)];
-  iconElement.classList.add(randomIcon);
-
+  iconElement.classList.add(icons[Math.floor(Math.random() * icons.length)]);
   iconElement.style.left = Math.random() * 100 + 'vw';
   iconElement.style.animationDuration = (Math.random() * 4 + 5) + 's';
   iconElement.style.fontSize = (Math.random() * 20 + 25) + 'px';
-
   container.appendChild(iconElement);
-
-  setTimeout(() => {
-    iconElement.remove();
-  }, 9000);
+  setTimeout(() => { iconElement.remove(); }, 9000);
 }
 
 function createFloatingIcons(icons) {
-  for (let i = 0; i < 8; i++) {
-    spawnIcon(icons);
-  }
+  for (let i = 0; i < 8; i++) spawnIcon(icons);
+}
+
+function setGameMode(mode) {
+  currentGameMode = mode;
+  document.getElementById('mode-add-btn').classList.toggle('active', mode === 'add');
+  document.getElementById('mode-mult-btn').classList.toggle('active', mode === 'mult');
+  generateQuestion();
 }
 
 function generateQuestion() {
-  const isMultiplication = Math.random() > 0.5;
-
-  if (isMultiplication) {
-    num1 = Math.floor(Math.random() * 9) + 2;
-    num2 = Math.floor(Math.random() * 9) + 2;
-    correctAnswer = num1 * num2;
-    document.getElementById('question').innerText = `${num1} × ${num2}`;
+  if (currentGameMode === 'add') {
+    const isAddition = Math.random() > 0.5;
+    if (isAddition) {
+      num1 = Math.floor(Math.random() * 9) + 1;
+      num2 = Math.floor(Math.random() * 9) + 1;
+      correctAnswer = num1 + num2;
+      document.getElementById('question').innerText = `${num1} + ${num2}`;
+    } else {
+      num1 = Math.floor(Math.random() * 9) + 2;
+      num2 = Math.floor(Math.random() * num1) + 1;
+      correctAnswer = num1 - num2;
+      document.getElementById('question').innerText = `${num1} − ${num2}`;
+    }
   } else {
-    num2 = Math.floor(Math.random() * 9) + 2;
-    correctAnswer = Math.floor(Math.random() * 9) + 2;
-    num1 = num2 * correctAnswer;
-    document.getElementById('question').innerText = `${num1} ÷ ${num2}`;
+    const isMultiplication = Math.random() > 0.5;
+    if (isMultiplication) {
+      num1 = Math.floor(Math.random() * 9) + 2;
+      num2 = Math.floor(Math.random() * 9) + 2;
+      correctAnswer = num1 * num2;
+      document.getElementById('question').innerText = `${num1} × ${num2}`;
+    } else {
+      num2 = Math.floor(Math.random() * 9) + 2;
+      correctAnswer = Math.floor(Math.random() * 9) + 2;
+      num1 = num2 * correctAnswer;
+      document.getElementById('question').innerText = `${num1} ÷ ${num2}`;
+    }
   }
 
   document.getElementById('answer-input').value = '';
@@ -74,6 +144,7 @@ function checkAnswer() {
   if (userAnswer === correctAnswer) {
     messageElement.style.color = '#10b981';
     messageElement.innerText = 'Правильно! 🎉';
+    solvedCount++;
     setTimeout(generateQuestion, 1000);
   } else {
     messageElement.style.color = '#ef4444';
@@ -81,70 +152,16 @@ function checkAnswer() {
   }
 }
 
-// Таблиця підказка
-function openModal() {
-  document.getElementById('modal').style.display = 'flex';
-  renderTable();
-}
-
-function closeModal() {
-  document.getElementById('modal').style.display = 'none';
-}
-
-// Вікно з лайфхаками
-function openTricksModal() {
-  document.getElementById('tricks-modal').style.display = 'flex';
-}
-
-function closeTricksModal() {
-  document.getElementById('tricks-modal').style.display = 'none';
-}
-
-function switchTable(mode) {
-  currentMode = mode;
-  const buttons = document.querySelectorAll('.tab-btn');
-  buttons.forEach(btn => btn.classList.remove('active'));
-  
-  if (mode === 'mult') {
-    buttons[0].classList.add('active');
-  } else {
-    buttons[1].classList.add('active');
-  }
-
-  renderTable();
-}
-
-function renderTable() {
-  const container = document.getElementById('table-container');
-  container.innerHTML = '';
-
-  for (let i = 2; i <= 9; i++) {
-    const block = document.createElement('div');
-    block.classList.add('table-block');
-    let html = `<h4>На ${i}</h4>`;
-
-    if (currentMode === 'mult') {
-      for (let j = 1; j <= 10; j++) {
-        html += `${i} × ${j} = ${i * j}<br>`;
-      }
-    } else {
-      for (let j = 1; j <= 10; j++) {
-        const res = i * j;
-        html += `${res} ÷ ${i} = ${j}<br>`;
-      }
-    }
-
-    block.innerHTML = html;
-    container.appendChild(block);
-  }
-}
+function openModal() { document.getElementById('modal').style.display = 'flex'; renderTable(); }
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+function openTricksModal() { document.getElementById('tricks-modal').style.display = 'flex'; }
+function closeTricksModal() { document.getElementById('tricks-modal').style.display = 'none'; }
+function openCounterModal() { document.getElementById('counter-modal').style.display = 'flex'; }
+function closeCounterModal() { document.getElementById('counter-modal').style.display = 'none'; }
 
 document.getElementById('answer-input').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    checkAnswer();
-  }
+  if (e.key === 'Enter') checkAnswer();
 });
 
-// Запуск
 generateQuestion();
 changeTheme();
