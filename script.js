@@ -1,4 +1,3 @@
-// Посилання на твій Google Apps Script
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZsXv8wtCHJv46ynb65V0aOTp1xtxKF5Jcao1hDLxo80jx68pBWUrSDRUwukrScmamtg/exec";
 
 let userName = "";
@@ -44,7 +43,6 @@ function startTimer() {
     const secs = String(secondsSpent % 60).padStart(2, '0');
     document.getElementById('timer-display').innerText = `${mins}:${secs}`;
 
-    // Щохвилини відправляємо оновлення в Google Таблицю
     if (secondsSpent % 60 === 0) {
       sendDataToGoogleSheets();
     }
@@ -68,7 +66,6 @@ function sendDataToGoogleSheets() {
   });
 }
 
-// Автоматично відправляємо дані, якщо закривають або згортають вкладку
 window.addEventListener("beforeunload", sendDataToGoogleSheets);
 
 function changeTheme() {

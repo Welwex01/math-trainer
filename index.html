@@ -3,19 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тренажер та корисні інструменти</title>
+  <title>Тренажер знань</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Фон із плаваючими елементами -->
   <div class="floating-container" id="floatingBg"></div>
+
+  <!-- Модальне вікно вибору імені -->
+  <div id="user-modal" class="modal" style="display: flex;">
+    <div class="modal-content">
+      <h2>Хто буде тренуватися? 👋</h2>
+      <p>Обери своє ім'я або введи нове:</p>
+      
+      <div class="user-buttons">
+        <button onclick="selectUser('Артем')">👦 Артем</button>
+        <button onclick="selectUser('Софія')">👧 Софія</button>
+        <button onclick="selectUser('Данило')">👦 Данило</button>
+      </div>
+
+      <p>Або введи своє ім'я:</p>
+      <input type="text" id="custom-name-input" placeholder="Твоє ім'я">
+      <br><br>
+      <button class="start-btn" onclick="startSession()">Почати тренування 🚀</button>
+    </div>
+  </div>
 
   <div class="container">
     <h1>Тренажер знань</h1>
 
-    <!-- Перемикач теми -->
     <div class="theme-selector">
       <label for="themeSelect">Обери всесвіт: </label>
       <select id="themeSelect" onchange="changeTheme()">
@@ -27,9 +44,12 @@
       </select>
     </div>
 
-    <!-- Картка з завданням -->
     <div class="card">
-      <!-- Перемикач режимів тренажера -->
+      <div class="user-info-bar">
+        <span>Учень: <strong id="current-user-display">-</strong></span> | 
+        <span>Час: <strong id="timer-display">00:00</strong></span>
+      </div>
+
       <div class="mode-selector">
         <button id="mode-add-btn" class="mode-btn active" onclick="setGameMode('add')">➕ / ➖ Додавання</button>
         <button id="mode-mult-btn" class="mode-btn" onclick="setGameMode('mult')">✖️ / ➗ Множення</button>
@@ -50,92 +70,41 @@
     </div>
   </div>
 
-  <!-- Модальне вікно з табличкою -->
+  <!-- Модальні вікна -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
       <h2>Шпоргалка</h2>
-      
       <div class="tab-buttons">
         <button class="tab-btn active" onclick="switchTable('mult')">Множення</button>
         <button class="tab-btn" onclick="switchTable('div')">Ділення</button>
       </div>
-
       <div id="table-container" class="table-grid"></div>
     </div>
   </div>
 
-  <!-- Модальне вікно з лайфхаками -->
   <div id="tricks-modal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeTricksModal()">&times;</span>
       <h2>💡 Як легко рахувати?</h2>
-      
       <div class="tricks-list">
         <div class="trick-card">
           <h3>➕ Додавання до 10</h3>
-          <p>Щоб швидко додати, наприклад, <strong>7 + 5</strong>: спочатку додай до 7 скільки не вистачає до 10 (це +3), а потім додай залишок (ще +2). Отримаєш <strong>12</strong>!</p>
-        </div>
-
-        <div class="trick-card">
-          <h3>✋ Простий рахунок на десятках</h3>
-          <p>Якщо додаєш <strong>9</strong>, просто додай 10 і відніми 1. Наприклад: 6 + 9 = 6 + 10 - 1 = <strong>15</strong>.</p>
-        </div>
-
-        <div class="trick-card">
-          <h3>✋ Фокус з множенням на 9 на пальцях</h3>
-          <p>Поклади долоні на стіл. Щоб помножити 9 на <strong>3</strong>, загни 3-й палець зліва. Ліворуч залишиться 2 пальці (це 20), а праворуч — 7 пальців. Відповідь: <strong>27</strong>!</p>
+          <p>Щоб швидко додати <strong>7 + 5</strong>: спочатку додай до 7 скільки не вистачає до 10 (+3), а потім залишок (+2). Отримаєш <strong>12</strong>!</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Модальне вікно з лічильником маленьких цифр -->
   <div id="counter-modal" class="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeCounterModal()">&times;</span>
-      <h2>🔢 Лічильник маленьких цифр (індексів)</h2>
-      <p style="color: #64748b; margin-bottom: 10px;">Введи текст з маленькими цифрами (наприклад: x², H₂O, 5³):</p>
-      
-      <div class="num-keypad">
-        <span class="keypad-title">Верхні індекси (степені):</span>
-        <div class="keypad-row">
-          <button onclick="insertChar('⁰')">⁰</button>
-          <button onclick="insertChar('¹')">¹</button>
-          <button onclick="insertChar('²')">²</button>
-          <button onclick="insertChar('³')">³</button>
-          <button onclick="insertChar('⁴')">⁴</button>
-          <button onclick="insertChar('⁵')">⁵</button>
-          <button onclick="insertChar('⁶')">⁶</button>
-          <button onclick="insertChar('⁷')">⁷</button>
-          <button onclick="insertChar('⁸')">⁸</button>
-          <button onclick="insertChar('⁹')">⁹</button>
-        </div>
-        <span class="keypad-title">Нижні індекси (хімічні/математичні):</span>
-        <div class="keypad-row">
-          <button onclick="insertChar('₀')">₀</button>
-          <button onclick="insertChar('₁')">₁</button>
-          <button onclick="insertChar('₂')">₂</button>
-          <button onclick="insertChar('₃')">₃</button>
-          <button onclick="insertChar('₄')">₄</button>
-          <button onclick="insertChar('₅')">₅</button>
-          <button onclick="insertChar('₆')">₆</button>
-          <button onclick="insertChar('₇')">₇</button>
-          <button onclick="insertChar('₈')">₈</button>
-          <button onclick="insertChar('₉')">₉</button>
-        </div>
-      </div>
-
-      <textarea id="text-to-count" placeholder="Введіть або вставте ваш текст сюди..." oninput="countSmallDigits()"></textarea>
-
+      <h2>🔢 Лічильник маленьких цифр</h2>
+      <textarea id="text-to-count" placeholder="Введіть текст..." oninput="countSmallDigits()"></textarea>
       <div class="stats-box">
         <div class="stat-item">
           <span class="stat-value" id="small-digits-count">0</span>
           <span class="stat-label">Маленьких цифр</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value" id="total-count">0</span>
-          <span class="stat-label">Усього символів</span>
         </div>
       </div>
     </div>
